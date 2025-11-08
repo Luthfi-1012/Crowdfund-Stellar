@@ -105,6 +105,31 @@ impl CrowdfundingContract {
     pub fn get_is_already_init(env: Env) -> bool {
         env.storage().instance().get(&IS_ALREADY_INIT).unwrap_or(false)
     }
+
+    // Return campaign goal amount (stroops)
+    pub fn get_goal(env: Env) -> i128 {
+        env.storage().instance().get(&CAMPAIGN_GOAL).unwrap_or(0)
+    }
+
+    // Return campaign deadline (unix timestamp seconds)
+    pub fn get_deadline(env: Env) -> u64 {
+        env.storage().instance().get(&CAMPAIGN_DEADLINE).unwrap_or(0)
+    }
+
+    // Return campaign owner address
+    pub fn get_owner(env: Env) -> Address {
+        env.storage().instance().get(&CAMPAIGN_OWNER).unwrap()
+    }
+
+    // Return aggregated campaign data: (goal, raised, deadline, owner, progress_pct)
+    pub fn get_campaign_data(env: Env) -> (i128, i128, u64, Address, i128) {
+        let goal: i128 = env.storage().instance().get(&CAMPAIGN_GOAL).unwrap_or(0);
+        let raised: i128 = env.storage().instance().get(&TOTAL_RAISED).unwrap_or(0);
+        let deadline: u64 = env.storage().instance().get(&CAMPAIGN_DEADLINE).unwrap_or(0);
+        let owner: Address = env.storage().instance().get(&CAMPAIGN_OWNER).unwrap();
+        let progress: i128 = if goal > 0 { (raised * 100) / goal } else { 0 };
+        (goal, raised, deadline, owner, progress)
+    }
     // 🎓 EXERCISE IDEAS untuk student:
     // Function-function ini bisa ditambahkan sebagai latihan:
     //
